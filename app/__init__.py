@@ -4,7 +4,7 @@ from app.extensions import db, migrate, login_manager
 
 
 
-def create_app():
+def create_app(test_config=None):
 
     # initiated inside flask as outside the app package
     app = Flask(
@@ -14,6 +14,8 @@ def create_app():
     ) 
 
     app.config.from_object("config.Config")
+    if test_config is not None:
+        app.config.update(test_config)
 
     # the actual connection betweeb database and app - migration
     db.init_app(app)
@@ -33,6 +35,15 @@ def create_app():
 
     from app import models
 
+    @app.after_request
+    def add_security_headers(response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault(
+            "Permissions-Policy",
+            "camera=(), microphone=(), geolocation=()",
+        )
+        return response
 
     return app
-

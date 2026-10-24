@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm # base class Flask-WTF
 from wtforms import SelectField, StringField, SubmitField, TextAreaField, IntegerField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, IPAddress, Length, Optional, NumberRange, Email, EqualTo
+from wtforms.validators import DataRequired, IPAddress, InputRequired, Length, Optional, NumberRange, Email, EqualTo
 
 class DeviceForm(FlaskForm):
 
     hostname = StringField("Hostname", validators=[DataRequired(), Length(max=100)])
     ip_address = StringField("IP address", validators=[DataRequired(), IPAddress(ipv4=True, ipv6=False), Length(max=45)])
-    prefix_length = IntegerField("Subnet prefix length", validators=[DataRequired(), NumberRange(min=0, max=32)])    
+    prefix_length = IntegerField("Subnet prefix length", validators=[InputRequired(), NumberRange(min=0, max=32)])
 
     device_type = SelectField("Device Type", choices=[
         ("", "Select a device type"),
@@ -50,7 +50,7 @@ class DeviceForm(FlaskForm):
     ], validators=[DataRequired()])
 
     status = SelectField("Status", choices=[
-        ("active", "Actvie"),
+        ("active", "Active"),
         ("inactive", "Inactive"),
         ("maintenance", "Maintenance"),
         ("decommissioned", "Decommissioned")

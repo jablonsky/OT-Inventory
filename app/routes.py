@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 from flask import Blueprint, render_template, flash, redirect, url_for, abort # import flask elements / objects
 
 from app.forms import DeviceForm, InitialAdminForm, LoginForm, LogoutForm, CreateUserForm
@@ -12,12 +14,68 @@ from flask_login import login_user, current_user, login_required, logout_user
 # blueprint to import flask application directly 
 main = Blueprint("main", __name__)
 
+DEMO_DEVICES = (
+    SimpleNamespace(
+        hostname="plc-pack-01",
+        ip_address="10.20.10.21",
+        prefix_length=24,
+        device_type="PLC",
+        vendor="Siemens",
+        model="SIMATIC S7-1500",
+        site="North Plant",
+        purdue_level="1",
+        zone="Cell/Area Zone",
+        status="active",
+    ),
+    SimpleNamespace(
+        hostname="hmi-line-02",
+        ip_address="10.20.20.42",
+        prefix_length=24,
+        device_type="HMI",
+        vendor="Rockwell Automation",
+        model="PanelView Plus 7",
+        site="North Plant",
+        purdue_level="2",
+        zone="Supervisory Control Zone",
+        status="maintenance",
+    ),
+    SimpleNamespace(
+        hostname="hist-core-01",
+        ip_address="10.20.30.15",
+        prefix_length=24,
+        device_type="Historian",
+        vendor="AVEVA",
+        model="Historian Server",
+        site="Central Operations",
+        purdue_level="3",
+        zone="Site Operations Zone",
+        status="active",
+    ),
+    SimpleNamespace(
+        hostname="fw-otdmz-01",
+        ip_address="172.20.35.1",
+        prefix_length=24,
+        device_type="Firewall",
+        vendor="Fortinet",
+        model="FortiGate 100F",
+        site="Central Operations",
+        purdue_level="3.5",
+        zone="OT DMZ",
+        status="active",
+    ),
+)
+
 @main.app_context_processor
 def inject_logout_form():
     if current_user.is_authenticated:
         return {"logout_form": LogoutForm()}
     
     return{}
+
+
+@main.route("/demo")
+def demo():
+    return render_template("demo.html", devices=DEMO_DEVICES)
 
 
 

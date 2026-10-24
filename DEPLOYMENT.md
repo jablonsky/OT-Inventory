@@ -46,6 +46,7 @@ if project_path not in sys.path:
     sys.path.insert(0, project_path)
 
 os.environ["SECRET_KEY"] = "REPLACE_WITH_A_LONG_RANDOM_SECRET"
+os.environ["COOKIE_SECURE"] = "true"
 os.environ["DATABASE_URI"] = "sqlite:////home/assetslab/OT-Inventory-1.0/instance/inventory.db"
 
 from run import app as application

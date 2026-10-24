@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% from "_device_icons.html" import device_type_label %}
+
+{% block title %}Read-only Demo{% endblock %}
+
+{% block content %}
+<div class="demo-banner mb-4" role="note">
+    <div>
+        <span class="section-label">Public portfolio demonstration</span>
+        <h1 class="h2 mt-2 mb-2">OT device inventory demo</h1>
+        <p class="mb-0">
+            This read-only preview uses fictional records. It is completely separate
+            from the secured application database.
+        </p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('main.login') }}">Authorised sign in</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="metric-card h-100">
+            <span class="metric-label">Sample assets</span>
+            <strong class="metric-value">{{ devices|length }}</strong>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="metric-card h-100">
+            <span class="metric-label">Sites represented</span>
+            <strong class="metric-value">2</strong>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="metric-card h-100">
+            <span class="metric-label">Security zones</span>
+            <strong class="metric-value">4</strong>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="metric-card h-100">
+            <span class="metric-label">Access level</span>
+            <strong class="metric-value metric-value-text">Read only</strong>
+        </div>
+    </div>
+</div>
+
+<section class="table-card" aria-labelledby="demo-inventory-heading">
+    <div class="mb-4">
+        <span class="section-label">Fictional asset register</span>
+        <h2 class="h4 mt-2 mb-1" id="demo-inventory-heading">Representative OT records</h2>
+        <p class="mb-0">The secured version adds detailed views, editing and role-based administration.</p>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">Hostname</th>
+                    <th scope="col">IP address / Prefix</th>
+                    <th scope="col">Device type</th>
+                    <th scope="col">Vendor</th>
+                    <th scope="col">Site</th>
+                    <th scope="col">Purdue level</th>
+                    <th scope="col">Zone</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for device in devices %}
+                    <tr>
+                        <td>
+                            <strong class="device-name">{{ device.hostname }}</strong>
+                            <small class="d-block text-muted">{{ device.model }}</small>
+                        </td>
+                        <td><code class="ip-address">{{ device.ip_address }}/{{ device.prefix_length }}</code></td>
+                        <td>{{ device_type_label(device.device_type) }}</td>
+                        <td>{{ device.vendor }}</td>
+                        <td>{{ device.site }}</td>
+                        <td>{{ device.purdue_level }}</td>
+                        <td>{{ device.zone }}</td>
+                        <td>
+                            <span class="status-badge status-{{ device.status|lower }}">
+                                {{ device.status|title }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<div class="demo-feature-note mt-4">
+    <h2 class="h5">What the secured application demonstrates</h2>
+    <p class="mb-0">
+        Authentication, administrator/editor/viewer permissions, CSRF-protected forms,
+        validation, database migrations and structured Purdue-model classification.
+    </p>
+</div>
+{% endblock %}

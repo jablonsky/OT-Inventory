@@ -82,6 +82,15 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
+                        <a
+                            class="nav-link{% if request.endpoint == 'main.demo' %} active{% endif %}"
+                            href="{{ url_for('main.demo') }}"
+                            {% if request.endpoint == 'main.demo' %}aria-current="page"{% endif %}
+                        >
+                            Demo
+                        </a>
+                    </li>
+                    <li class="nav-item">
                     <a
                         class="btn btn-outline-light btn-sm px-3{% if request.endpoint == 'main.login' %} active{% endif %}"
                         href="{{ url_for('main.login') }}"

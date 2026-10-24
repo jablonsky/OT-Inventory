@@ -602,6 +602,30 @@ a:hover {
     white-space: pre-line;
 }
 
+.demo-invitation,
+.demo-feature-note {
+    padding: 1.25rem;
+    border: 1px solid rgba(77, 99, 255, 0.18);
+    border-radius: var(--app-radius);
+    background: linear-gradient(135deg, rgba(77, 99, 255, 0.06), rgba(39, 198, 229, 0.07));
+}
+
+.demo-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(77, 99, 255, 0.18);
+    border-radius: var(--app-radius);
+    background: #fff;
+    box-shadow: 0 12px 35px rgba(32, 39, 78, 0.06);
+}
+
+.metric-value-text {
+    font-size: 1.4rem;
+}
+
 @media (max-width: 767.98px) {
     .device-detail-header {
         align-items: stretch;
@@ -611,6 +635,12 @@ a:hover {
     .detail-list > div {
         grid-template-columns: 1fr;
         gap: 0.25rem;
+    }
+
+    .demo-banner {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 1rem;
     }
 }
 

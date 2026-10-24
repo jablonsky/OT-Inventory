@@ -18,6 +18,7 @@ deployment to PythonAnywhere.
 - Purdue-level and security-zone classification
 - Asset status and descriptive notes
 - Database migrations with Flask-Migrate
+- Public read-only demonstration using fictional asset data
 
 ![OT device inventory](screenshots/inventory.png)
 
@@ -40,13 +41,19 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Set a local secret key, create the database, and start the application:
+Create the local environment file, generate a secret key, then create the
+database and start the application:
 
 ```bash
-export SECRET_KEY="replace-with-a-long-random-value"
+cp .env.example .env
+python -c "import secrets; print(secrets.token_hex(32))"
+# Paste the generated value after SECRET_KEY= in .env
 flask --app run.py db upgrade
 flask --app run.py run --debug
 ```
+
+The `.env` file is excluded from Git and must never be committed. The public
+demo is available at `http://127.0.0.1:5000/demo` without an account.
 
 Open `http://127.0.0.1:5000/setup` to create the first administrator.
 
