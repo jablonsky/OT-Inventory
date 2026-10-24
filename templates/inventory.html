@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% from "_device_icons.html" import device_type_label %}
+
+{% block title %}Inventory{% endblock %}
+
+{% block content %}
+{% set inventory_devices = devices|default([], true) %}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+    <div>
+        <span class="section-label">Asset register</span>
+        <h1 class="h2 mt-2 mb-1">OT device inventory</h1>
+        <p class="mb-0">A structured list of devices connected to the OT environment.</p>
+    </div>
+    {% if current_user.role in ["editor", "admin"] %}
+        <a class="btn btn-primary px-4" href="{{ url_for('main.add_device') }}">Add device</a>
+    {% endif %}
+</div>
+
+<section class="table-card" aria-labelledby="inventory-table-heading">
+    <h2 class="visually-hidden" id="inventory-table-heading">Registered OT devices</h2>
+
+    {% if inventory_devices %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Hostname</th>
+                        <th scope="col">IP address / Prefix</th>
+                        <th scope="col">Device type</th>
+                        <th scope="col">Vendor</th>
+                        <th scope="col">Site</th>
+                        <th scope="col">Purdue level</th>
+                        <th scope="col">Zone</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for device in inventory_devices %}
+                        <tr>
+                            <td>
+                                <strong class="device-name">
+                                    <a href="{{ url_for('main.device_details', device_id=device.id) }}">
+                                        {{ device.hostname }}
+                                    </a>
+                                </strong>
+                                {% if device.model %}
+                                    <small class="d-block text-muted">{{ device.model }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <code class="ip-address">{{ device.ip_address }}/{{ device.prefix_length }}</code>
+                            </td>
+                            <td>{{ device_type_label(device.device_type) }}</td>
+                            <td>{{ device.vendor }}</td>
+                            <td>{{ device.site or "Not set" }}</td>
+                            <td>{{ device.purdue_level }}</td>
+                            <td>{{ device.zone }}</td>
+                            <td>
+                                <span class="status-badge status-{{ device.status|lower }}">
+                                    {{ device.status|replace('_', ' ')|title }}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-2">
+                                    <a
+                                        class="btn btn-sm btn-outline-secondary"
+                                        href="{{ url_for('main.device_details', device_id=device.id) }}"
+                                        aria-label="View {{ device.hostname }} details"
+                                    >View</a>
+                                    {% if current_user.role in ["editor", "admin"] %}
+                                    <a
+                                        class="btn btn-sm btn-outline-primary"
+                                        href="{{ url_for('main.edit_device', device_id=device.id) }}"
+                                        aria-label="Edit {{ device.hostname }}"
+                                    >Edit</a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-mark" aria-hidden="true">IP</div>
+            <h2 class="h4">No OT devices recorded yet</h2>
+            {% if current_user.role in ["editor", "admin"] %}
+                <p>Add the first asset to begin building the inventory.</p>
+                <a class="btn btn-primary" href="{{ url_for('main.add_device') }}">Add first device</a>
+            {% else %}
+                <p class="mb-0">
+                    No OT devices are currently available. An editor or administrator
+                    can add inventory records.
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

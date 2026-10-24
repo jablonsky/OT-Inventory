@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-7 col-xl-5">
+        <div class="form-card">
+            <div class="mb-4">
+                <span class="section-label">Secure access</span>
+                <h1 class="h2 mt-2 mb-2">Sign in to OT Inventory</h1>
+                <p class="mb-0">
+                    Use your authorised account to access OT asset information.
+                </p>
+            </div>
+
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.email.label(class_="form-label") }}
+                    {{ form.email(
+                        class_="form-control" + (" is-invalid" if form.email.errors else ""),
+                        autocomplete="email",
+                        inputmode="email",
+                        autofocus=true,
+                        placeholder="name@example.com"
+                    ) }}
+                    {% for error in form.email.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.password.label(class_="form-label") }}
+                    {{ form.password(
+                        class_="form-control" + (" is-invalid" if form.password.errors else ""),
+                        autocomplete="current-password"
+                    ) }}
+                    {% for error in form.password.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-check mb-4">
+                    {{ form.remember_me(class_="form-check-input") }}
+                    {{ form.remember_me.label(class_="form-check-label") }}
+                </div>
+
+                {{ form.submit(class_="btn btn-primary btn-lg w-100") }}
+            </form>
+
+            <p class="small text-muted mt-4 mb-0">
+                Access is limited to authorised users. Contact an administrator if
+                you need an account or your access has been disabled.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+# Python-generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local environments and editor settings
+.venv/
+venv/
+.env
+.vscode/
+*.code-workspace
+
+# Runtime data and secrets
+instance/*.db
+instance/*.db.*
+*.sqlite
+*.sqlite3
+
+# Local project documents and screenshots containing account details
+/Project Documents/
+/screenshots/5.png
+/screenshots/users.png
+
+# Logs and operating-system files
+*.log
+.DS_Store
+Thumbs.db

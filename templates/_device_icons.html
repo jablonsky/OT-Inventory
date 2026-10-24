@@ -1,0 +1,76 @@
+{% macro device_type_label(device_type) -%}
+    {% if device_type == "PLC" %}
+        {% set icon_name = "plc" %}
+    {% elif device_type == "HMI" %}
+        {% set icon_name = "hmi" %}
+    {% elif device_type == "SCADA Server" %}
+        {% set icon_name = "scada" %}
+    {% elif device_type == "Historian" %}
+        {% set icon_name = "historian" %}
+    {% elif device_type == "Network Switch" %}
+        {% set icon_name = "switch" %}
+    {% elif device_type == "Network Router" %}
+        {% set icon_name = "router" %}
+    {% elif device_type == "Firewall" %}
+        {% set icon_name = "firewall" %}
+    {% elif device_type == "Engineering Workstation" %}
+        {% set icon_name = "workstation" %}
+    {% elif device_type == "Other Server" %}
+        {% set icon_name = "server" %}
+    {% else %}
+        {% set icon_name = "other" %}
+    {% endif %}
+
+    <span class="device-type-label device-type-label--{{ icon_name }}">
+        <span class="device-type-icon" aria-hidden="true">
+            {% if icon_name == "plc" %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <rect x="5" y="5" width="14" height="14" rx="2" />
+                    <path d="M9 9h6v6H9zM2 8h3M2 12h3M2 16h3M19 8h3M19 12h3M19 16h3" />
+                </svg>
+            {% elif icon_name == "hmi" %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <rect x="3" y="4" width="18" height="13" rx="2" />
+                    <path d="M8 21h8M12 17v4M7 8h5M7 11h9" />
+                </svg>
+            {% elif icon_name == "historian" %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <ellipse cx="12" cy="5" rx="7" ry="3" />
+                    <path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7" />
+                </svg>
+            {% elif icon_name == "switch" %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <rect x="3" y="7" width="18" height="10" rx="2" />
+                    <path d="M6 11h2M10 11h2M14 11h2M18 11h1M7 17v3M17 17v3M5 20h4M15 20h4" />
+                </svg>
+            {% elif icon_name == "router" %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <rect x="3" y="8" width="18" height="10" rx="2" />
+                    <path d="M8 13h8M8 13l2-2M8 13l2 2M16 13l-2-2M16 13l-2 2M7 8V4M17 8V4" />
+                </svg>
+            {% elif icon_name == "firewall" %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <path d="M12 3 20 6v5c0 5.1-3.4 8.6-8 10-4.6-1.4-8-4.9-8-10V6l8-3Z" />
+                    <path d="M8 9h8M8 12h8M10 9v3M14 12v3M7 15h10" />
+                </svg>
+            {% elif icon_name == "workstation" %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <rect x="3" y="4" width="18" height="13" rx="2" />
+                    <path d="M8 21h8M12 17v4M7 8l2 2-2 2M11 12h4" />
+                </svg>
+            {% elif icon_name in ["scada", "server"] %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <rect x="4" y="3" width="16" height="8" rx="2" />
+                    <rect x="4" y="13" width="16" height="8" rx="2" />
+                    <path d="M8 7h.01M8 17h.01M12 7h5M12 17h5" />
+                </svg>
+            {% else %}
+                <svg viewBox="0 0 24 24" role="img">
+                    <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" />
+                    <path d="m4 7.5 8 4.5 8-4.5M12 12v9" />
+                </svg>
+            {% endif %}
+        </span>
+        <span>{{ device_type }}</span>
+    </span>
+{%- endmacro %}

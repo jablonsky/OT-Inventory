@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% from "_device_icons.html" import device_type_label %}
+
+{% block title %}{{ device.hostname }}{% endblock %}
+
+{% block content %}
+<nav aria-label="Breadcrumb" class="mb-4">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ url_for('main.inventory') }}">Inventory</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ device.hostname }}</li>
+    </ol>
+</nav>
+
+<div class="device-detail-header">
+    <div>
+        <span class="section-label">Asset details</span>
+        <h1 class="h2 mt-2 mb-2">{{ device.hostname }}</h1>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            {{ device_type_label(device.device_type) }}
+            <span class="status-badge status-{{ device.status|lower }}">
+                {{ device.status|replace('_', ' ')|title }}
+            </span>
+        </div>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-secondary" href="{{ url_for('main.inventory') }}">Back to inventory</a>
+        {% if current_user.role in ["editor", "admin"] %}
+            <a class="btn btn-primary" href="{{ url_for('main.edit_device', device_id=device.id) }}">Edit device</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <section class="detail-card h-100" aria-labelledby="network-heading">
+            <span class="detail-card-icon" aria-hidden="true">IP</span>
+            <div>
+                <h2 class="h5" id="network-heading">Network and classification</h2>
+                <dl class="detail-list">
+                    <div>
+                        <dt>IP address</dt>
+                        <dd><code class="ip-address">{{ device.ip_address }}/{{ device.prefix_length }}</code></dd>
+                    </div>
+                    <div>
+                        <dt>VLAN</dt>
+                        <dd>{{ device.vlan or "Not set" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Purdue level</dt>
+                        <dd>{{ device.purdue_level }}</dd>
+                    </div>
+                    <div>
+                        <dt>Zone</dt>
+                        <dd>{{ device.zone }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-lg-6">
+        <section class="detail-card h-100" aria-labelledby="manufacturer-heading">
+            <span class="detail-card-icon" aria-hidden="true">ID</span>
+            <div>
+                <h2 class="h5" id="manufacturer-heading">Manufacturer details</h2>
+                <dl class="detail-list">
+                    <div>
+                        <dt>Vendor</dt>
+                        <dd>{{ device.vendor }}</dd>
+                    </div>
+                    <div>
+                        <dt>Model</dt>
+                        <dd>{{ device.model or "Not set" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Serial number</dt>
+                        <dd>{{ device.serial_number or "Not set" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Device type</dt>
+                        <dd>{{ device.device_type }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-lg-6">
+        <section class="detail-card h-100" aria-labelledby="location-heading">
+            <span class="detail-card-icon" aria-hidden="true">LOC</span>
+            <div>
+                <h2 class="h5" id="location-heading">Location</h2>
+                <dl class="detail-list">
+                    <div>
+                        <dt>Site</dt>
+                        <dd>{{ device.site or "Not set" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Physical location</dt>
+                        <dd>{{ device.location or "Not set" }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-lg-6">
+        <section class="detail-card h-100" aria-labelledby="record-heading">
+            <span class="detail-card-icon" aria-hidden="true">LOG</span>
+            <div>
+                <h2 class="h5" id="record-heading">Inventory record</h2>
+                <dl class="detail-list">
+                    <div>
+                        <dt>Created</dt>
+                        <dd>{{ device.created_at.strftime("%d %b %Y, %H:%M") if device.created_at else "Not available" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Last updated</dt>
+                        <dd>{{ device.updated_at.strftime("%d %b %Y, %H:%M") if device.updated_at else "Not available" }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-12">
+        <section class="detail-card" aria-labelledby="description-heading">
+            <span class="detail-card-icon" aria-hidden="true">TXT</span>
+            <div>
+                <h2 class="h5" id="description-heading">Description</h2>
+                <p class="mb-0 detail-description">
+                    {{ device.description or "No description has been added for this asset." }}
+                </p>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

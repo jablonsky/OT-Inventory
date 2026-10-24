@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="app-panel dashboard-welcome mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <span class="section-label">OT asset workspace</span>
+            <h1 class="display-6 mt-2 mb-3">OT IP Inventory</h1>
+            <p class="lead mb-0">
+                Keep a simple, structured record of the devices connected to your
+                operational technology network.
+            </p>
+        </div>
+        {% if current_user.role in ["editor", "admin"] %}
+            <div class="col-lg-4 text-lg-end">
+                <a class="btn btn-primary btn-lg px-4" href="{{ url_for('main.add_device') }}">
+                    Add a device
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section aria-labelledby="getting-started-heading">
+    <div class="mb-4">
+        <span class="section-label">Getting started</span>
+        <h2 class="h3 mt-2 mb-1" id="getting-started-heading">Build the inventory step by step</h2>
+        <p class="mb-0">Start with one asset, then review all saved OT devices in the inventory.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <article class="app-card h-100">
+                <span class="step-number" aria-hidden="true">01</span>
+                {% if current_user.role in ["editor", "admin"] %}
+                    <h3 class="h4 mt-3">Register an OT asset</h3>
+                    <p>
+                        Record its hostname, IP address, device type, manufacturer and
+                        physical location.
+                    </p>
+                    <a class="btn btn-primary" href="{{ url_for('main.add_device') }}">Add device</a>
+                {% else %}
+                    <h3 class="h4 mt-3">Read-only access</h3>
+                    <p>
+                        Your viewer role allows you to review inventory records without
+                        changing OT asset information.
+                    </p>
+                    <span class="badge text-bg-light border">Viewer</span>
+                {% endif %}
+            </article>
+        </div>
+
+        <div class="col-md-6">
+            <article class="app-card h-100">
+                <span class="step-number" aria-hidden="true">02</span>
+                <h3 class="h4 mt-3">Review the inventory</h3>
+                <p>
+                    Use one clear table to see the key identity, network and status
+                    information for every asset.
+                </p>
+                <a class="btn btn-outline-primary" href="{{ url_for('main.inventory') }}">View inventory</a>
+            </article>
+        </div>
+    </div>
+</section>
+
+{% if current_user.role == "admin" %}
+    <section class="mt-5" aria-labelledby="administration-heading">
+        <div class="mb-4">
+            <span class="section-label">Administration</span>
+            <h2 class="h3 mt-2 mb-1" id="administration-heading">Manage application access</h2>
+            <p class="mb-0">Create authorised accounts and review the roles assigned to users.</p>
+        </div>
+
+        <article class="app-card">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <span class="step-number" aria-hidden="true">ID</span>
+                    <h3 class="h4 mt-3">User management</h3>
+                    <p class="mb-0">
+                        Review active accounts, add new users and maintain appropriate
+                        access to OT inventory information.
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="d-flex flex-wrap justify-content-lg-end gap-2">
+                        <a class="btn btn-primary" href="{{ url_for('main.manage_users') }}">
+                            View users
+                        </a>
+                        <a class="btn btn-outline-primary" href="{{ url_for('main.create_user') }}">
+                            Add user
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+{% endif %}
+{% endblock %}

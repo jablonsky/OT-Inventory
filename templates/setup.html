@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Initial Setup{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-7 col-xl-6">
+        <div class="form-card">
+            <div class="mb-4">
+                <span class="section-label">Secure first-run setup</span>
+                <h1 class="h2 mt-2 mb-2">Create the administrator account</h1>
+                <p class="mb-0">
+                    Set up the first account for this OT inventory. This page becomes
+                    unavailable after the administrator is created.
+                </p>
+            </div>
+
+            <div class="alert alert-primary" role="note">
+                This account will be able to manage the inventory and, later, other
+                user accounts.
+            </div>
+
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.name.label(class_="form-label") }}
+                    <span class="required-mark">*</span>
+                    {{ form.name(
+                        class_="form-control" + (" is-invalid" if form.name.errors else ""),
+                        autocomplete="name",
+                        autofocus=true,
+                        placeholder="Your full name"
+                    ) }}
+                    {% for error in form.name.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.email.label(class_="form-label") }}
+                    <span class="required-mark">*</span>
+                    {{ form.email(
+                        class_="form-control" + (" is-invalid" if form.email.errors else ""),
+                        autocomplete="email",
+                        inputmode="email",
+                        placeholder="name@example.com"
+                    ) }}
+                    {% for error in form.email.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.password.label(class_="form-label") }}
+                    <span class="required-mark">*</span>
+                    {{ form.password(
+                        class_="form-control" + (" is-invalid" if form.password.errors else ""),
+                        autocomplete="new-password"
+                    ) }}
+                    {% for error in form.password.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                    <div class="form-text">Use at least 12 characters.</div>
+                </div>
+
+                <div class="mb-3">
+                    {{ form.confirm_password.label(class_="form-label") }}
+                    <span class="required-mark">*</span>
+                    {{ form.confirm_password(
+                        class_="form-control" + (" is-invalid" if form.confirm_password.errors else ""),
+                        autocomplete="new-password"
+                    ) }}
+                    {% for error in form.confirm_password.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-actions">
+                    {{ form.submit(class_="btn btn-primary btn-lg w-100") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title|default("Add Device") }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-10">
+        <div class="form-card">
+            <div class="mb-4">
+                <span class="section-label">{{ section_label|default("New inventory record") }}</span>
+                <h1 class="h2 mt-2 mb-2">{{ heading|default("Add OT device") }}</h1>
+                <p class="mb-0">
+                    {{ introduction|default("Enter the information currently known about this asset.") }} Fields marked
+                    with <span class="required-mark">*</span> are required.
+                </p>
+            </div>
+
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+
+                <fieldset class="form-section">
+                    <legend>Device identity</legend>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form.hostname.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.hostname(
+                                class_="form-control" + (" is-invalid" if form.hostname.errors else ""),
+                                placeholder="Example: PLC-LINE-01",
+                                autofocus=true
+                            ) }}
+                            {% for error in form.hostname.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.ip_address.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.ip_address(
+                                class_="form-control" + (" is-invalid" if form.ip_address.errors else ""),
+                                placeholder="Example: 192.168.10.25"
+                            ) }}
+                            {% for error in form.ip_address.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                            <div class="form-text">Each IP address must be unique.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.prefix_length.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.prefix_length(
+                                class_="form-control" + (" is-invalid" if form.prefix_length.errors else ""),
+                                min="0",
+                                max="32",
+                                inputmode="numeric",
+                                placeholder="Example: 24"
+                            ) }}
+                            {% for error in form.prefix_length.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                            <div class="form-text">Enter 24 for a subnet mask of 255.255.255.0.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.device_type.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.device_type(
+                                class_="form-select" + (" is-invalid" if form.device_type.errors else "")
+                            ) }}
+                            {% for error in form.device_type.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.status.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.status(
+                                class_="form-select" + (" is-invalid" if form.status.errors else "")
+                            ) }}
+                            {% for error in form.status.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Manufacturer details</legend>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            {{ form.vendor.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.vendor(
+                                class_="form-control" + (" is-invalid" if form.vendor.errors else ""),
+                                placeholder="Example: Siemens"
+                            ) }}
+                            {% for error in form.vendor.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-4">
+                            {{ form.model.label(class_="form-label") }}
+                            {{ form.model(
+                                class_="form-control" + (" is-invalid" if form.model.errors else ""),
+                                placeholder="Example: S7-1500"
+                            ) }}
+                            {% for error in form.model.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-4">
+                            {{ form.serial_number.label(class_="form-label") }}
+                            {{ form.serial_number(
+                                class_="form-control" + (" is-invalid" if form.serial_number.errors else ""),
+                                placeholder="Manufacturer serial number"
+                            ) }}
+                            {% for error in form.serial_number.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section">
+                    <legend>Network and location</legend>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            {{ form.site.label(class_="form-label") }}
+                            {{ form.site(
+                                class_="form-control" + (" is-invalid" if form.site.errors else ""),
+                                placeholder="Example: London Plant"
+                            ) }}
+                            {% for error in form.site.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-4">
+                            {{ form.location.label(class_="form-label") }}
+                            {{ form.location(
+                                class_="form-control" + (" is-invalid" if form.location.errors else ""),
+                                placeholder="Example: Control Room 2"
+                            ) }}
+                            {% for error in form.location.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-4">
+                            {{ form.vlan.label(class_="form-label") }}
+                            {{ form.vlan(
+                                class_="form-control" + (" is-invalid" if form.vlan.errors else ""),
+                                placeholder="Example: OT-VLAN-120"
+                            ) }}
+                            {% for error in form.vlan.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.purdue_level.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.purdue_level(
+                                class_="form-select" + (" is-invalid" if form.purdue_level.errors else "")
+                            ) }}
+                            {% for error in form.purdue_level.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                            <div class="form-text">Select where this asset belongs in the Purdue model.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.zone.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.zone(
+                                class_="form-select" + (" is-invalid" if form.zone.errors else "")
+                            ) }}
+                            {% for error in form.zone.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                            <div class="form-text">Choose the security or functional zone containing the asset.</div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section mb-0">
+                    <legend>Additional information</legend>
+                    {{ form.description.label(class_="form-label") }}
+                    {{ form.description(
+                        class_="form-control" + (" is-invalid" if form.description.errors else ""),
+                        rows="4",
+                        placeholder="Add a short purpose, function or note about this device."
+                    ) }}
+                    {% for error in form.description.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </fieldset>
+
+                <div class="form-actions">
+                    {{ form.submit(class_="btn btn-primary btn-lg px-4") }}
+                    <a class="btn btn-outline-secondary btn-lg px-4" href="{{ url_for('main.inventory') }}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

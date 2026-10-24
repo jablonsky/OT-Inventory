@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<section class="app-panel mb-4">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div>
+            <span class="section-label">Administration</span>
+            <h1 class="h2 mt-2 mb-2">User management</h1>
+            <p class="mb-0">
+                Review who can access the OT inventory and create authorised accounts.
+            </p>
+        </div>
+        <div>
+            <a class="btn btn-primary btn-lg px-4" href="{{ url_for('main.create_user') }}">
+                Add user
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mb-4" aria-label="User account summary">
+    <div class="col-sm-6 col-lg-4">
+        <article class="metric-card h-100">
+            <span class="metric-label">All accounts</span>
+            <strong class="metric-value">{{ users|length }}</strong>
+            <span class="text-muted">Users recorded in this application</span>
+        </article>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <article class="metric-card h-100">
+            <span class="metric-label">Active accounts</span>
+            <strong class="metric-value">{{ active_user_count }}</strong>
+            <span class="text-muted">Users currently permitted to sign in</span>
+        </article>
+    </div>
+</section>
+
+<section aria-labelledby="user-list-heading">
+    <div class="d-flex align-items-end justify-content-between gap-3 mb-3">
+        <div>
+            <span class="section-label">Access register</span>
+            <h2 class="h3 mt-2 mb-0" id="user-list-heading">Authorised users</h2>
+        </div>
+    </div>
+
+    {% if users %}
+        <div class="table-card p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">User</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>
+                                    <strong>{{ user.name }}</strong>
+                                    {% if user.id == current_user.id %}
+                                        <span class="badge text-bg-light border ms-1">You</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <span class="badge text-bg-primary">
+                                        {{ user.role|replace('_', ' ')|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if user.active %}
+                                        <span class="badge text-bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge text-bg-secondary">Disabled</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.created_at.strftime("%d %b %Y") }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-state-mark" aria-hidden="true">ID</span>
+            <h3 class="h4">No user accounts found</h3>
+            <p>Create the first authorised account for this application.</p>
+            <a class="btn btn-primary" href="{{ url_for('main.create_user') }}">Add user</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

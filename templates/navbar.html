@@ -1,0 +1,97 @@
+<nav class="navbar navbar-expand-lg navbar-dark app-navbar shadow-sm" aria-label="Main navigation">
+    <div class="container">
+        <a
+            class="navbar-brand d-flex align-items-center gap-2"
+            href="{{ url_for('main.dashboard') if current_user.is_authenticated else url_for('main.login') }}"
+        >
+            <span class="brand-mark" aria-hidden="true">IP</span>
+            <span class="brand-copy">
+                <strong>OT Engineering Toolkit</strong>
+                <small>IP Inventory</small>
+            </span>
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavigation"
+            aria-controls="mainNavigation"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavigation">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a
+                            class="nav-link{% if request.endpoint == 'main.dashboard' %} active{% endif %}"
+                            href="{{ url_for('main.dashboard') }}"
+                            {% if request.endpoint == 'main.dashboard' %}aria-current="page"{% endif %}
+                        >
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link{% if request.endpoint == 'main.inventory' %} active{% endif %}"
+                            href="{{ url_for('main.inventory') }}"
+                            {% if request.endpoint == 'main.inventory' %}aria-current="page"{% endif %}
+                        >
+                            Inventory
+                        </a>
+                    </li>
+                    {% if current_user.role == "admin" %}
+                        <li class="nav-item">
+                            <a
+                                class="nav-link{% if request.endpoint in ['main.manage_users', 'main.create_user'] %} active{% endif %}"
+                                href="{{ url_for('main.manage_users') }}"
+                                {% if request.endpoint in ['main.manage_users', 'main.create_user'] %}aria-current="page"{% endif %}
+                            >
+                                Users
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if current_user.role in ["editor", "admin"] %}
+                        <li class="nav-item ms-lg-1">
+                            <a
+                                class="btn btn-outline-light btn-sm px-3{% if request.endpoint == 'main.add_device' %} active{% endif %}"
+                                href="{{ url_for('main.add_device') }}"
+                                {% if request.endpoint == 'main.add_device' %}aria-current="page"{% endif %}
+                            >
+                                Add device
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item ms-lg-2">
+                        <span class="navbar-text text-white small">
+                            {{ current_user.name }}
+                            <span class="text-white-50">
+                                ({{ current_user.role|replace('_', ' ')|title }})
+                            </span>
+                        </span>
+                    </li>
+                    <li class="nav-item ms-lg-1">
+                        <form method="post" action="{{ url_for('main.logout') }}">
+                            {{ logout_form.hidden_tag() }}
+                            {{ logout_form.submit(class_="btn btn-light btn-sm px-3") }}
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                    <a
+                        class="btn btn-outline-light btn-sm px-3{% if request.endpoint == 'main.login' %} active{% endif %}"
+                        href="{{ url_for('main.login') }}"
+                        {% if request.endpoint == 'main.login' %}aria-current="page"{% endif %}
+                    >
+                        Sign in
+                    </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Add User{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-7">
+        <div class="form-card">
+            <div class="mb-4">
+                <span class="section-label">User management</span>
+                <h1 class="h2 mt-2 mb-2">Create an authorised user</h1>
+                <p class="mb-0">
+                    Add an account and grant only the access required for the user’s role.
+                </p>
+            </div>
+
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+
+                <fieldset class="form-section">
+                    <legend>Account details</legend>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form.name.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.name(
+                                class_="form-control" + (" is-invalid" if form.name.errors else ""),
+                                autocomplete="name",
+                                autofocus=true,
+                                placeholder="User’s full name"
+                            ) }}
+                            {% for error in form.name.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.email.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.email(
+                                class_="form-control" + (" is-invalid" if form.email.errors else ""),
+                                autocomplete="email",
+                                inputmode="email",
+                                placeholder="name@example.com"
+                            ) }}
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form.role.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.role(
+                                class_="form-select" + (" is-invalid" if form.role.errors else "")
+                            ) }}
+                            {% for error in form.role.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                            <div class="form-text">
+                                Viewers can read inventory data. Editors can also add devices.
+                                Administrators can additionally manage user access.
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section mb-0">
+                    <legend>Temporary password</legend>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form.password.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.password(
+                                class_="form-control" + (" is-invalid" if form.password.errors else ""),
+                                autocomplete="new-password"
+                            ) }}
+                            {% for error in form.password.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                            <div class="form-text">Use at least 12 characters.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.confirm_password.label(class_="form-label") }}
+                            <span class="required-mark">*</span>
+                            {{ form.confirm_password(
+                                class_="form-control" + (" is-invalid" if form.confirm_password.errors else ""),
+                                autocomplete="new-password"
+                            ) }}
+                            {% for error in form.confirm_password.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="form-actions">
+                    {{ form.submit(class_="btn btn-primary btn-lg px-4") }}
+                    <a class="btn btn-outline-secondary btn-lg px-4" href="{{ url_for('main.manage_users') }}">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
