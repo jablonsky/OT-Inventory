@@ -1,6 +1,9 @@
+import csv
+import io
+from datetime import date
 from types import SimpleNamespace
 
-from flask import Blueprint, render_template, flash, redirect, url_for, abort # import flask elements / objects
+from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 
 from app.forms import DeviceForm, InitialAdminForm, LoginForm, LogoutForm, CreateUserForm
 from app.models import Device, User # required model for the route to create a new device in db
@@ -8,6 +11,57 @@ from app.extensions import db # import db object
 from app.decorators import roles_required
 
 from flask_login import login_user, current_user, login_required, logout_user
+from sqlalchemy import or_ #or groups posibilities into database condition under OR
+
+
+INVENTORY_STATUSES = {
+    "active",
+    "inactive",
+    "maintenance",
+    "decommissioned",
+}
+
+
+def _inventory_filters():
+    search_query = request.args.get("q", "").strip()
+    selected_status = request.args.get("status", "").strip()
+
+    if selected_status not in INVENTORY_STATUSES:
+        selected_status = ""
+
+    return search_query, selected_status
+
+
+def _inventory_query(search_query="", selected_status=""):
+    query = db.select(Device)
+
+    if search_query:
+        search_pattern = f"%{search_query}%"
+        query = query.where(or_(
+            Device.hostname.ilike(search_pattern),
+            Device.ip_address.ilike(search_pattern),
+            Device.vendor.ilike(search_pattern),
+            Device.device_type.ilike(search_pattern),
+            Device.model.ilike(search_pattern),
+            Device.serial_number.ilike(search_pattern),
+        ))
+
+    if selected_status:
+        query = query.where(Device.status == selected_status)
+
+    return query.order_by(Device.hostname)
+
+
+def _csv_safe(value):
+    """Return a spreadsheet-safe string without losing empty database values."""
+    if value is None:
+        return ""
+
+    text = str(value)
+    if text.startswith(("=", "+", "-", "@", "\t", "\r")):
+        return f"'{text}"
+
+    return text
 
 
 
@@ -205,16 +259,97 @@ def create_user():
 @main.route("/")
 @login_required
 def dashboard():
-    return render_template("dashboard.html") 
+    devices = db.session.scalars(db.select(Device)).all()
+
+    total_devices = len(devices)
+    active_devices = 0
+    maintenance_devices = 0
+    inactive_devices = 0
+
+    for device in devices:
+        if device.status == "active":
+            active_devices = active_devices + 1
+        elif device.status == "maintenance":
+            maintenance_devices = maintenance_devices + 1
+        elif device.status == "inactive" or device.status == "decommissioned":
+            inactive_devices = inactive_devices + 1
+
+    return render_template(
+        "dashboard.html",
+        total_devices=total_devices,
+        active_devices=active_devices,
+        maintenance_devices=maintenance_devices,
+        inactive_devices=inactive_devices,
+    )
 
 
 @main.route("/inventory")
 @login_required
 def inventory():
+    search_query, selected_status = _inventory_filters()
+    query = _inventory_query(search_query, selected_status)
+    devices = db.session.scalars(query).all()
 
-    devices = Device.query.all() # query model from database, excecute and return query in the py list
+    return render_template(
+        "inventory.html",
+        devices=devices,
+        search_query=search_query,
+        selected_status=selected_status,
+        )
 
-    return render_template("inventory.html", devices=devices) # for device left side Jinja, right side database query
+@main.route("/inventory/export.csv")
+@login_required
+def export_inventory_csv():
+    search_query, selected_status = _inventory_filters()
+    query = _inventory_query(search_query, selected_status)
+    devices = db.session.scalars(query).all()
+
+    output = io.StringIO(newline="")
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "Hostname",
+        "IP Address",
+        "Prefix Length",
+        "Device Type",
+        "Vendor",
+        "Model",
+        "Serial Number",
+        "Site",
+        "Location",
+        "VLAN",
+        "Purdue Level",
+        "Zone",
+        "Device Status",
+        "Device Description"
+    ])
+
+    for device in devices:
+        writer.writerow(_csv_safe(value) for value in [
+            device.hostname,
+            device.ip_address,
+            device.prefix_length,
+            device.device_type,
+            device.vendor,
+            device.model,
+            device.serial_number,
+            device.site,
+            device.location,
+            device.vlan,
+            device.purdue_level,
+            device.zone,
+            device.status,
+            device.description,
+        ])
+
+    filename = f"ot-inventory-{date.today().isoformat()}.csv"
+    response = Response(
+        "\ufeff" + output.getvalue(),
+        content_type="text/csv; charset=utf-8",
+    )
+    response.headers["Content-Disposition"] = f'attachment; filename="{filename}"'
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 @main.route("/devices/<int:device_id>")

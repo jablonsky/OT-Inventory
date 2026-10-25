@@ -23,6 +23,48 @@
     </div>
 </section>
 
+<section class="mb-5" aria-labelledby="inventory-overview-heading">
+    <div class="mb-4">
+        <span class="section-label">Inventory overview</span>
+        <h2 class="h3 mt-2 mb-1" id="inventory-overview-heading">Device statistics</h2>
+        <p class="mb-0">A quick summary of the devices currently recorded in the inventory.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-sm-6 col-xl-3">
+            <article class="metric-card h-100">
+                <span class="metric-label">Total devices</span>
+                <strong class="metric-value">{{ total_devices }}</strong>
+                <span class="text-muted">All inventory records</span>
+            </article>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <article class="metric-card h-100">
+                <span class="metric-label">Active</span>
+                <strong class="metric-value">{{ active_devices }}</strong>
+                <span class="text-muted">Currently operational</span>
+            </article>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <article class="metric-card h-100">
+                <span class="metric-label">Maintenance</span>
+                <strong class="metric-value">{{ maintenance_devices }}</strong>
+                <span class="text-muted">Requiring attention</span>
+            </article>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <article class="metric-card h-100">
+                <span class="metric-label">Inactive or decommissioned</span>
+                <strong class="metric-value">{{ inactive_devices }}</strong>
+                <span class="text-muted">Not currently operational</span>
+            </article>
+        </div>
+    </div>
+</section>
+
 <section aria-labelledby="getting-started-heading">
     <div class="mb-4">
         <span class="section-label">Getting started</span>

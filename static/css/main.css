@@ -239,6 +239,26 @@ a:hover {
     box-shadow: var(--app-shadow);
 }
 
+.inventory-filters {
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    border: 1px solid rgba(109, 119, 203, 0.15);
+    border-radius: var(--app-radius-lg);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: var(--app-shadow);
+}
+
+.inventory-filters .form-label {
+    color: var(--app-navy);
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.inventory-filters .form-control,
+.inventory-filters .form-select,
+.inventory-filters .btn {
+    min-height: 3rem;
+}
+
 .app-panel,
 .app-card,
 .metric-card,

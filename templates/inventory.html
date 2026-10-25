@@ -5,6 +5,7 @@
 
 {% block content %}
 {% set inventory_devices = devices|default([], true) %}
+{% set filters_active = search_query or selected_status %}
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
     <div>
@@ -12,15 +13,110 @@
         <h1 class="h2 mt-2 mb-1">OT device inventory</h1>
         <p class="mb-0">A structured list of devices connected to the OT environment.</p>
     </div>
-    {% if current_user.role in ["editor", "admin"] %}
-        <a class="btn btn-primary px-4" href="{{ url_for('main.add_device') }}">Add device</a>
-    {% endif %}
+    <div class="d-flex flex-wrap gap-2">
+        <a
+            class="btn btn-outline-primary px-4"
+            href="{{ url_for('main.export_inventory_csv', q=search_query, status=selected_status) }}"
+            data-export-csv
+        >Export CSV</a>
+        {% if current_user.role in ["editor", "admin"] %}
+            <a class="btn btn-primary px-4" href="{{ url_for('main.add_device') }}">Add device</a>
+        {% endif %}
+    </div>
 </div>
+
+<div
+    id="csv-export-status"
+    class="alert alert-dismissible d-none mb-4"
+    role="status"
+    aria-live="polite"
+>
+    <span id="csv-export-status-message"></span>
+    <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        data-export-status-close
+    ></button>
+</div>
+
+<form class="inventory-filters mb-4" method="get" action="{{ url_for('main.inventory') }}">
+    <div class="row g-3 align-items-end">
+        <div class="col-lg-6">
+            <label class="form-label" for="inventory-search">
+                Search inventory
+            </label>
+
+            <input
+                class="form-control"
+                id="inventory-search"
+                name="q"
+                type="search"
+                value="{{ search_query }}"
+                placeholder="Hostname, IP address, vendor, model, device type or serial number"
+            >
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <label class="form-label" for="inventory-status">
+                Status
+            </label>
+
+            <select
+                class="form-select"
+                id="inventory-status"
+                name="status"
+            >
+                <option value="">All statuses</option>
+                <option value="active" {% if selected_status == "active" %}selected{% endif %}>
+                    Active
+                </option>
+                <option value="inactive" {% if selected_status == "inactive" %}selected{% endif %}>
+                    Inactive
+                </option>
+                <option value="maintenance" {% if selected_status == "maintenance" %}selected{% endif %}>
+                    Maintenance
+                </option>
+                <option value="decommissioned" {% if selected_status == "decommissioned" %}selected{% endif %}>
+                    Decommissioned
+                </option>
+            </select>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary flex-grow-1" type="submit">
+                    Apply filters
+                </button>
+
+                <a
+                    class="btn btn-outline-secondary"
+                    href="{{ url_for('main.inventory') }}"
+                >
+                    Clear
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
 
 <section class="table-card" aria-labelledby="inventory-table-heading">
     <h2 class="visually-hidden" id="inventory-table-heading">Registered OT devices</h2>
 
     {% if inventory_devices %}
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+            <p class="mb-0 text-muted" role="status">
+                Showing
+                <strong>{{ inventory_devices|length }}</strong>
+                device{% if inventory_devices|length != 1 %}s{% endif %}{% if filters_active %} matching your filters{% endif %}.
+            </p>
+            {% if filters_active %}
+                <a class="small fw-semibold" href="{{ url_for('main.inventory') }}">
+                    Clear filters
+                </a>
+            {% endif %}
+        </div>
+
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead>
@@ -85,16 +181,23 @@
         </div>
     {% else %}
         <div class="empty-state">
-            <div class="empty-state-mark" aria-hidden="true">IP</div>
-            <h2 class="h4">No OT devices recorded yet</h2>
-            {% if current_user.role in ["editor", "admin"] %}
-                <p>Add the first asset to begin building the inventory.</p>
-                <a class="btn btn-primary" href="{{ url_for('main.add_device') }}">Add first device</a>
+            {% if filters_active %}
+                <div class="empty-state-mark" aria-hidden="true">0</div>
+                <h2 class="h4">No devices match your filters</h2>
+                <p>Try a different search term or status, or clear the current filters.</p>
+                <a class="btn btn-primary" href="{{ url_for('main.inventory') }}">Clear filters</a>
             {% else %}
-                <p class="mb-0">
-                    No OT devices are currently available. An editor or administrator
-                    can add inventory records.
-                </p>
+                <div class="empty-state-mark" aria-hidden="true">IP</div>
+                <h2 class="h4">No OT devices recorded yet</h2>
+                {% if current_user.role in ["editor", "admin"] %}
+                    <p>Add the first asset to begin building the inventory.</p>
+                    <a class="btn btn-primary" href="{{ url_for('main.add_device') }}">Add first device</a>
+                {% else %}
+                    <p class="mb-0">
+                        No OT devices are currently available. An editor or administrator
+                        can add inventory records.
+                    </p>
+                {% endif %}
             {% endif %}
         </div>
     {% endif %}
